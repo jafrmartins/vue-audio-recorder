@@ -192,6 +192,7 @@
 
     <div class="ar-content" :class="{'ar__blur': isUploading}">
       <div class="ar-recorder">
+        <!-- <toggle-button @change="toggleButton" :labels="{ unchecked: 'training-data', checked: 'sample-data' }"/> -->
         <icon-button
           class="ar-icon ar-icon__lg"
           :name="iconButtonType"
@@ -200,15 +201,15 @@
             'ar-icon--pulse': isRecording && volume > 0.02
           }"
           @click.native="toggleRecorder"/>
-        <icon-button
+        <!-- <icon-button
           class="ar-icon ar-icon__sm ar-recorder__stop"
           name="stop"
-          @click.native="stopRecorder"/>
+          @click.native="stopRecorder"/> -->
       </div>
 
-      <div class="ar-recorder__records-limit" v-if="attempts">Attempts: {{attemptsLeft}}/{{attempts}}</div>
+      <div class="ar-recorder__records-limit" v-if="attempts">Gravações: {{attemptsLeft}}/{{attempts}}</div>
       <div class="ar-recorder__duration">{{recordedTime}}</div>
-      <div class="ar-recorder__time-limit" v-if="time">Record duration is limited: {{time}}m</div>
+      <div class="ar-recorder__time-limit" v-if="time">Tempo Máximo da Gravação: {{time}}m</div>
 
       <div class="ar-records">
         <div
@@ -277,6 +278,7 @@
     },
     data () {
       return {
+        recordType    : null,
         isUploading   : false,
         recorder      : this._initRecorder(),
         recordList    : [],
@@ -310,6 +312,22 @@
       this.stopRecorder()
     },
     methods: {
+      // toggleDataTypeButton(data) {
+      //   // unchecked: 'training-data', checked: 'sample-data'
+      //   if(data.value) {
+      //     this.recordType = 'sample-data'
+      //   } else {
+      //     this.recordType = 'training-data'
+      //   }
+      // },
+      // toggleVoiceButton(data) {
+      //   // unchecked: 'voice-2', checked: 'voice-1'
+      //   if(data.value) {
+      //     this.recordType = 'voice-1'
+      //   } else {
+      //     this.recordType = 'voice-2'
+      //   }
+      // },
       toggleRecorder () {
         if (this.attempts && this.recorder.records.length >= this.attempts) {
           return
@@ -318,7 +336,8 @@
         if (!this.isRecording || (this.isRecording && this.isPause)) {
           this.recorder.start()
         } else {
-          this.recorder.pause()
+          //this.recorder.pause()
+          this.stopRecorder()
         }
       },
       stopRecorder () {
@@ -355,7 +374,7 @@
     },
     computed: {
       attemptsLeft () {
-        return this.attempts - this.recordList.length
+        return this.recordList.length
       },
       iconButtonType () {
         return this.isRecording && this.isPause ? 'mic' : this.isRecording ? 'pause' : 'mic'

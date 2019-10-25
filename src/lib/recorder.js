@@ -64,7 +64,6 @@ export default class {
     if (this._isMp3()) {
       record = this.lameEncoder.finish()
     } else {
-      console.log(this.encoderOptions.sampleRate);
       let wavEncoder = new WavEncoder({
         bufferSize : this.bufferSize,
         sampleRate : this.encoderOptions.sampleRate,

@@ -1,9 +1,11 @@
 import AudioPlayer   from '@/components/player.vue'
 import AudioRecorder from '@/components/recorder.vue'
+import { ToggleButton } from 'vue-js-toggle-button'
 
 const components = {
   AudioPlayer,
   AudioRecorder,
+  ToggleButton,
 
   install (Vue) {
     if (this.installed) {
@@ -16,6 +18,8 @@ const components = {
 
     Vue.component('audio-player', AudioPlayer)
     Vue.component('audio-recorder', AudioRecorder)
+    Vue.component('toggle-button', ToggleButton)
+
   }
 }
 
