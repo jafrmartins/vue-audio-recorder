@@ -192,10 +192,6 @@
 
     <div class="ar-content" :class="{'ar__blur': isUploading}">
       <div class="ar-recorder">
-        <div class="d-flex justify-content-between">
-          <toggle-button @change="toggleDataButton" :labels="{ unchecked: 'training', checked: 'sample' }"/>
-          <toggle-button @change="toggleVoiceButton" :labels="{ unchecked: 'voice-1', checked: 'voice-2' }"/>
-        </div>
         <icon-button
           class="ar-icon ar-icon__lg"
           :name="iconButtonType"
@@ -281,8 +277,6 @@
     },
     data () {
       return {
-        dataType      : null,
-        voiceType     : null,
         isUploading   : false,
         recorder      : this._initRecorder(),
         recordList    : [],
