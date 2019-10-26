@@ -239,7 +239,6 @@
               :upload-url="uploadUrl"/> -->
             <uploader
               class="ar__uploader"
-              :trigger="uploadTrigger"
               :record="record"
               :filename="filename"
               :headers="headers"
@@ -247,10 +246,10 @@
 
         </div>
 
-        <div class="d-flex justify-content-between">
+        <!-- <div class="d-flex justify-content-between">
           <label>Upload Files</label>
           <icon-button name="save" class="ar-icon ar-icon__xs ar-icon--no-border" @click.native="uploadRecords"/>
-        </div>
+        </div> -->
 
       </div>
 
@@ -271,8 +270,6 @@
   export default {
     mixins: [UploaderPropsMixin],
     props: {
-
-      uploadTrigger : { type: Function },
 
       attempts : { type: Number },
       time     : { type: Number },
@@ -316,7 +313,6 @@
 
       this.$eventBus.$on('end-upload', (msg) => {
         this.isUploading = false
-
         if (msg.status === 'success') {
           this.successfulUpload && this.successfulUpload(msg.response)
         } else {
