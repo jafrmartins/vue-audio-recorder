@@ -277,7 +277,6 @@
     },
     data () {
       return {
-        recordType    : null,
         isUploading   : false,
         recorder      : this._initRecorder(),
         recordList    : [],
