@@ -3,7 +3,8 @@
 </style>
 
 <template>
-  <icon-button name="save" class="ar-icon ar-icon__xs ar-icon--no-border" @click.native="clickHandler"/>
+  <div></div>
+  <!-- <icon-button name="save" class="ar-icon ar-icon__xs ar-icon--no-border" @click.native="clickHandler"/> -->
 </template>
 
 <script>
@@ -18,11 +19,10 @@
     },
     components: {
       IconButton
-
     },
     mounted() {
 
-      this.$eventBus.$on('trigger-upload', () => {
+      this.$eventBus.$on(`trigger-upload-${this.record.id}`, (record) => {
         this.upload()
       })
 
@@ -37,10 +37,10 @@
         }
         this.$eventBus.$emit('start-upload')
         const data = new FormData()
-        data.append('audio', this.record.blob, `${this.filename}.mp3`)
+        const type = this.record.blob.type.split('/')[1]
+        data.append('audio', this.record.blob, `${this.record.filename}.${type}`)
         const headers = Object.assign(this.headers, {})
-        headers['Content-Type'] = `multipart/form-data; boundary=${data._boundary}`
-
+        headers['Content-Type'] = `multipart/form-data;`
         this.$http.post(this.uploadUrl, data, { headers: headers }).then(resp => {
           this.$eventBus.$emit('end-upload', { status: 'success', response: resp })
         }).catch(error => {

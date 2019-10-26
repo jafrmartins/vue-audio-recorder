@@ -3,33 +3,38 @@ import WavEncoder from './wav-encoder'
 import { convertTimeMMSS } from './utils'
 
 export default class {
-  constructor (options = {}) {
+  constructor(options = {}) {
     this.beforeRecording = options.beforeRecording
-    this.pauseRecording  = options.pauseRecording
-    this.afterRecording  = options.afterRecording
-    this.micFailed       = options.micFailed
-    this.format          = options.format
+    this.pauseRecording = options.pauseRecording
+    this.afterRecording = options.afterRecording
+    this.micFailed = options.micFailed
+    this.format = options.format
+    this.filename = options.filename
 
     this.encoderOptions = {
-      bitRate    : options.bitRate,
-      sampleRate : options.sampleRate
+      bitRate: options.bitRate,
+      sampleRate: options.sampleRate
     }
 
     this.bufferSize = 4096
-    this.records    = []
+    this.records = []
 
-    this.isPause     = false
+    this.isPause = false
     this.isRecording = false
 
     this.duration = 0
-    this.volume   = 0
+    this.volume = 0
 
     this.wavSamples = []
 
     this._duration = 0
   }
 
-  start () {
+  setFilename(filename) {
+    this.filename = filename
+  }
+
+  start() {
     const constraints = {
       video: false,
       audio: {
@@ -41,11 +46,11 @@ export default class {
     this.beforeRecording && this.beforeRecording('start recording')
 
     navigator.mediaDevices
-             .getUserMedia(constraints)
-             .then(this._micCaptured.bind(this))
-             .catch(this._micError.bind(this))
+      .getUserMedia(constraints)
+      .then(this._micCaptured.bind(this))
+      .catch(this._micError.bind(this))
 
-    this.isPause     = false
+    this.isPause = false
     this.isRecording = true
 
     if (this._isMp3() && !this.lameEncoder) {
@@ -53,7 +58,7 @@ export default class {
     }
   }
 
-  stop () {
+  stop() {
     this.stream.getTracks().forEach((track) => track.stop())
     this.input.disconnect()
     this.processor.disconnect()
@@ -65,27 +70,28 @@ export default class {
       record = this.lameEncoder.finish()
     } else {
       let wavEncoder = new WavEncoder({
-        bufferSize : this.bufferSize,
-        sampleRate : this.encoderOptions.sampleRate,
-        samples    : this.wavSamples
+        bufferSize: this.bufferSize,
+        sampleRate: this.encoderOptions.sampleRate,
+        samples: this.wavSamples
       })
       record = wavEncoder.finish()
       this.wavSamples = []
     }
 
     record.duration = convertTimeMMSS(this.duration)
+    record.filename = this.filename
     this.records.push(record)
 
     this._duration = 0
-    this.duration  = 0
+    this.duration = 0
 
-    this.isPause     = false
+    this.isPause = false
     this.isRecording = false
 
     this.afterRecording && this.afterRecording(record)
   }
 
-  pause () {
+  pause() {
     this.stream.getTracks().forEach((track) => track.stop())
     this.input.disconnect()
     this.processor.disconnect()
@@ -96,20 +102,20 @@ export default class {
     this.pauseRecording && this.pauseRecording('pause recording')
   }
 
-  recordList () {
+  recordList() {
     return this.records
   }
 
-  lastRecord () {
+  lastRecord() {
     return this.records.slice(-1)
   }
 
-  _micCaptured (stream) {
-    this.context    = new(window.AudioContext || window.webkitAudioContext)()
-    this.duration   = this._duration
-    this.input      = this.context.createMediaStreamSource(stream)
-    this.processor  = this.context.createScriptProcessor(this.bufferSize, 1, 1)
-    this.stream     = stream
+  _micCaptured(stream) {
+    this.context = new (window.AudioContext || window.webkitAudioContext)()
+    this.duration = this._duration
+    this.input = this.context.createMediaStreamSource(stream)
+    this.processor = this.context.createScriptProcessor(this.bufferSize, 1, 1)
+    this.stream = stream
 
     this.processor.onaudioprocess = (ev) => {
       const sample = ev.inputBuffer.getChannelData(0)
@@ -133,11 +139,11 @@ export default class {
     this.processor.connect(this.context.destination)
   }
 
-  _micError (error) {
+  _micError(error) {
     this.micFailed && this.micFailed(error)
   }
 
-  _isMp3 () {
+  _isMp3() {
     return this.format.toLowerCase() === 'mp3'
   }
 }

@@ -246,6 +246,12 @@
               :upload-url="uploadUrl"/>
 
         </div>
+
+        <div class="d-flex justify-content-between">
+          <label>Upload Files</label>
+          <icon-button name="save" class="ar-icon ar-icon__xs ar-icon--no-border" @click.native="uploadRecords"/>
+        </div>
+
       </div>
 
       <audio-player :record="selected"/>
@@ -328,6 +334,7 @@
         }
 
         if (!this.isRecording || (this.isRecording && this.isPause)) {
+          this.recorder.setFilename(this.filename)
           this.recorder.start()
         } else {
           //this.recorder.pause()
@@ -346,6 +353,17 @@
         this.recordList.splice(idx, 1)
         this.$set(this.selected, 'url', null)
         this.$eventBus.$emit('remove-record')
+      },
+      uploadRecords() {
+        if(!this.recordList.length) { return }
+        let i = 0
+        const interval = setInterval(() => {
+          const record = this.recordList[i]; i++;
+          this.selected = record
+          this.selectRecord && this.selectRecord(record)
+          this.$eventBus.$emit(`trigger-upload-${record.id}`)
+          if(i === this.recordList.length) clearInterval(interval);
+        }, 500)
       },
       choiceRecord (record) {
         if (this.selected === record) {
