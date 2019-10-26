@@ -192,7 +192,6 @@
 
     <div class="ar-content" :class="{'ar__blur': isUploading}">
       <div class="ar-recorder">
-        <!-- <toggle-button @change="toggleButton" :labels="{ unchecked: 'training-data', checked: 'sample-data' }"/> -->
         <icon-button
           class="ar-icon ar-icon__lg"
           :name="iconButtonType"
@@ -312,22 +311,6 @@
       this.stopRecorder()
     },
     methods: {
-      // toggleDataTypeButton(data) {
-      //   // unchecked: 'training-data', checked: 'sample-data'
-      //   if(data.value) {
-      //     this.recordType = 'sample-data'
-      //   } else {
-      //     this.recordType = 'training-data'
-      //   }
-      // },
-      // toggleVoiceButton(data) {
-      //   // unchecked: 'voice-2', checked: 'voice-1'
-      //   if(data.value) {
-      //     this.recordType = 'voice-1'
-      //   } else {
-      //     this.recordType = 'voice-2'
-      //   }
-      // },
       toggleRecorder () {
         if (this.attempts && this.recorder.records.length >= this.attempts) {
           return
