@@ -3,7 +3,7 @@
 </style>
 
 <template>
-  <icon-button name="save" class="ar-icon ar-icon__xs ar-icon--no-border" @click.native="upload"/>
+  <icon-button name="save" class="ar-icon ar-icon__xs ar-icon--no-border" @click.native="clickHandler"/>
 </template>
 
 <script>
@@ -13,22 +13,31 @@
   export default {
     mixins: [UploaderPropsMixin],
     props: {
-      record: { type: Object }
+      trigger: { type: Function },
+      record: { type: Object },
     },
     components: {
       IconButton
+
+    },
+    mounted() {
+
+      this.$eventBus.$on('trigger-upload', () => {
+        this.upload()
+      })
+
     },
     methods: {
-      upload () {
+      clickHandler() {
+        if(this.trigger) { this.trigger() } else { this.upload() }
+      },
+      upload() {
         if (!this.record.url) {
           return
         }
-
         this.$eventBus.$emit('start-upload')
-
         const data = new FormData()
         data.append('audio', this.record.blob, `${this.filename}.mp3`)
-
         const headers = Object.assign(this.headers, {})
         headers['Content-Type'] = `multipart/form-data; boundary=${data._boundary}`
 
@@ -37,6 +46,7 @@
         }).catch(error => {
           this.$eventBus.$emit('end-upload', { status: 'fail', response: error })
         })
+
       }
     }
   }

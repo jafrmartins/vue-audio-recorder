@@ -224,19 +224,27 @@
             <div class="ar__text">Record {{idx + 1}}</div>
             <div class="ar__text">{{record.duration}}</div>
 
-            <downloader
+            <!-- <downloader
               v-if="record.id === selected.id && showDownloadButton"
               class="ar__downloader"
               :record="record"
-              :filename="filename"/>
+              :filename="filename"/> -->
 
-            <uploader
+            <!-- <uploader
               v-if="record.id === selected.id && showUploadButton"
               class="ar__uploader"
               :record="record"
               :filename="filename"
               :headers="headers"
+              :upload-url="uploadUrl"/> -->
+            <uploader
+              class="ar__uploader"
+              :trigger="uploadTrigger"
+              :record="record"
+              :filename="filename"
+              :headers="headers"
               :upload-url="uploadUrl"/>
+
         </div>
       </div>
 
@@ -257,6 +265,9 @@
   export default {
     mixins: [UploaderPropsMixin],
     props: {
+
+      uploadTrigger : { type: Function },
+
       attempts : { type: Number },
       time     : { type: Number },
 
@@ -291,6 +302,7 @@
       Uploader
     },
     mounted () {
+
       this.$eventBus.$on('start-upload', () => {
         this.isUploading = true
         this.beforeUpload && this.beforeUpload('before upload')
