@@ -4,6 +4,7 @@ import { convertTimeMMSS } from './utils'
 
 export default class {
   constructor(options = {}) {
+
     this.beforeRecording = options.beforeRecording
     this.pauseRecording = options.pauseRecording
     this.afterRecording = options.afterRecording
@@ -111,6 +112,7 @@ export default class {
   }
 
   _micCaptured(stream) {
+
     this.context = new (window.AudioContext || window.webkitAudioContext)()
     this.duration = this._duration
     this.input = this.context.createMediaStreamSource(stream)
@@ -120,23 +122,21 @@ export default class {
     this.processor.onaudioprocess = (ev) => {
       const sample = ev.inputBuffer.getChannelData(0)
       let sum = 0.0
-
       if (this._isMp3()) {
         this.lameEncoder.encode(sample)
       } else {
         this.wavSamples.push(new Float32Array(sample))
       }
-
       for (let i = 0; i < sample.length; ++i) {
         sum += sample[i] * sample[i]
       }
-
       this.duration = parseFloat(this._duration) + parseFloat(this.context.currentTime.toFixed(2))
       this.volume = Math.sqrt(sum / sample.length).toFixed(2)
     }
 
     this.input.connect(this.processor)
     this.processor.connect(this.context.destination)
+
   }
 
   _micError(error) {
@@ -146,4 +146,5 @@ export default class {
   _isMp3() {
     return this.format.toLowerCase() === 'mp3'
   }
+
 }
